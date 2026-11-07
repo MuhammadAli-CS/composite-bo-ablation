@@ -128,9 +128,10 @@ def main():
     ap.add_argument("--g1", nargs="+", default=list(OUTER_G1))
     ap.add_argument("--jobs", type=int, default=1)
     ap.add_argument("--kernel", choices=["rbf", "matern"], default="matern")
-    ap.add_argument("--g2", choices=["ackley", "identity"], default="ackley",
+    ap.add_argument("--g2", choices=["ackley", "identity", "shared"], default="ackley",
                     help="identity makes objective 2 a plain GP, so the"
-                         " whole advantage is attributable to g1")
+                         " whole advantage is attributable to g1; shared"
+                         " makes f2 = h0 with no second intermediate")
     ap.add_argument("--out", default="composite_ablation/results/two_stage.json")
     a = ap.parse_args()
     torch.set_default_dtype(DTYPE)

@@ -164,7 +164,7 @@ def make_two_stage(g1_name: str, dim: int = 6, lengthscale: float = 0.5,
     the absolute numbers mean something rather than only the contrasts.
     """
     g1 = OUTER_G1[g1_name]
-    n_inner = N_INNER if g2 == "ackley" else 2
+    n_inner = {"ackley": N_INNER, "identity": 2, "shared": 1}[g2]
     # Matern 5/2 by default, because that is BoTorch's default kernel: drawing
     # h from the same family the surrogate assumes is what makes the model
     # correctly specified about the inner function, so any remaining
@@ -177,7 +177,8 @@ def make_two_stage(g1_name: str, dim: int = 6, lengthscale: float = 0.5,
 
     def raw(C: Tensor) -> Tensor:
         f1 = g1(C[..., 0])
-        f2 = ackley(C[..., 1:]) if g2 == "ackley" else C[..., 1]
+        f2 = (ackley(C[..., 1:]) if g2 == "ackley"
+              else C[..., 1] if g2 == "identity" else C[..., 0])
         return torch.stack([f1, f2], dim=-1)                       # (n, 2)
 
     # Percentile normalisation per objective, on a fixed reference set.
